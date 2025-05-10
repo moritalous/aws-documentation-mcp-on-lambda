@@ -1,0 +1,1 @@
+git+https://github.com/moritalous/mcp.git@experimental_support_streamable_http#subdirectory=src/aws-documentation-mcp-server

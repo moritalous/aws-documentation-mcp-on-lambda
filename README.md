@@ -1,26 +1,26 @@
-# Streamable MCP Lambda Function
+# AWS Documentation MCP on Lambda
 
-This project is a serverless application that implements a Streamable HTTP API using the Model Context Protocol (MCP) on AWS Lambda.
+This project is a serverless application that implements the AWS Documentation Model Context Protocol (MCP) server on AWS Lambda with response streaming capabilities.
 
 ## Project Overview
 
 This application deploys a Lambda function that supports response streaming using AWS SAM (Serverless Application Model). The main features include:
 
-- Tool invocation functionality using the Model Context Protocol (MCP)
+- AWS Documentation search and retrieval functionality using the Model Context Protocol (MCP)
 - Real-time responses utilizing Lambda Response Streaming
-- Implementation examples of simple greeting tools and notification capabilities
+- Python-based implementation of the MCP server
 
 ## About the Libraries Used
 
-This project uses the Model Context Protocol (MCP) TypeScript library.
+This project uses a fork of the AWS Documentation MCP server with experimental support for streamable HTTP:
 
-- **Repository**: [github.com/anthropics/model-context-protocol](https://github.com/anthropics/model-context-protocol)
+- **Repository**: [github.com/moritalous/mcp](https://github.com/moritalous/mcp/tree/experimental_support_streamable_http/src/aws-documentation-mcp-server)
 
 ## Architecture
 
 This application consists of the following components:
 
-- **MCPStreamableFunction**: Lambda function using Node.js 22.x runtime
+- **MCPStreamableFunction**: Lambda function using Python 3.12 runtime
 - **Lambda Adapter Layer**: Layer to support response streaming
 - **Function URL**: Endpoint for direct access to the Lambda function without authentication
 
@@ -30,7 +30,7 @@ To use this project, you need:
 
 - [AWS CLI](https://aws.amazon.com/cli/)
 - [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-- [Node.js 22.x](https://nodejs.org/en/)
+- [Python 3.12](https://www.python.org/downloads/)
 - [Docker](https://www.docker.com/products/docker-desktop)
 
 ## Setup and Deployment
@@ -39,14 +39,9 @@ To use this project, you need:
 
 ```bash
 # Clone the repository
-git clone https://github.com/moritalous/mcp-streamablehttp-lambda-sample.git
+git clone https://github.com/moritalous/aws-documentation-mcp-on-lambda.git
 # Navigate to the project directory
-cd mcp-streamablehttp-lambda-sample
-
-# Install dependencies
-cd mcp-function
-npm install
-cd ..
+cd aws-documentation-mcp-on-lambda
 ```
 
 ### Build and Deploy
@@ -61,7 +56,7 @@ sam deploy --guided
 
 During deployment, you will be prompted to enter the following information:
 
-- **Stack Name**: Name of the CloudFormation stack (e.g., mcp-server-streamable-http)
+- **Stack Name**: Name of the CloudFormation stack (e.g., aws-documentation-mcp-on-lambda)
 - **AWS Region**: Region to deploy to
 - **Confirm changes before deploy**: Whether to confirm changes
 - **Allow SAM CLI IAM role creation**: Whether to allow IAM role creation
@@ -73,43 +68,28 @@ After deployment completes, the Lambda Function URL will be output. You can use 
 
 This application provides the following endpoints:
 
-- **POST /mcp**: Initialize and send MCP requests
-- **GET /mcp**: Method not allowed (returns 405)
-- **DELETE /mcp**: Method not allowed (returns 405)
+- **POST /mcp/**: Initialize and send MCP requests
+- **GET /mcp/**: Health check endpoint
 
 ## Implemented Tools
 
-This sample application implements the following tools:
+This MCP server implements AWS Documentation tools:
 
-1. **greet**: A simple greeting tool
-   - Parameter: `name` (string)
+1. **search_documentation**: Search AWS documentation
+   - Parameter: `search_phrase` (string)
+   - Parameter: `limit` (integer, optional)
 
-2. **multi-greet**: A tool that sends multiple greetings with notifications
-   - Parameter: `name` (string)
+2. **read_documentation**: Read AWS documentation page
+   - Parameter: `url` (string)
+   - Parameter: `max_length` (integer, optional)
+   - Parameter: `start_index` (integer, optional)
 
-3. **greeting-template**: A prompt template for generating greetings
-   - Parameter: `name` (string)
-
-4. **greeting-resource**: A resource that provides a default greeting
-
-## Client Implementation
-
-A client implementation example is available in `mcp-function/src/client.ts`. This client provides an interactive command-line interface to:
-
-1. Connect to the server
-2. List available tools, prompts, and resources
-3. Call tools with arguments
-4. Get prompts with arguments
-5. Handle notifications from the server
-6. Manage session termination and reconnection
+3. **recommend**: Get content recommendations for an AWS documentation page
+   - Parameter: `url` (string)
 
 ## Testing Connection from Local to Lambda
 
-```bash
-cd mcp-function
-
-MCP_SERVER_URL=https://*****.lambda-url.us-east-1.on.aws/mcp npm run dev:client
-```
+You can test the connection to your deployed Lambda function using an MCP client that supports the Model Context Protocol.
 
 ## Resource Cleanup
 

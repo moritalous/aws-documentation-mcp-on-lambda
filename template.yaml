@@ -16,7 +16,7 @@ Resources:
     Properties:
       CodeUri: mcp-function/
       Handler: run.sh
-      Runtime: nodejs22.x
+      Runtime: python3.12
       MemorySize: 1024
       Architectures:
         - x86_64
@@ -24,8 +24,9 @@ Resources:
         Variables:
           AWS_LAMBDA_EXEC_WRAPPER: /opt/bootstrap
           AWS_LWA_INVOKE_MODE: response_stream
+          AWS_LWA_PORT : 8888
+          AWS_LWA_READINESS_CHECK_PATH : /mcp/
           RUST_LOG: info
-          PORT: 3000
       Layers:
         - !Sub arn:aws:lambda:${AWS::Region}:753240598075:layer:LambdaAdapterLayerX86:24
       FunctionUrlConfig:
